@@ -23,7 +23,7 @@ type AuthService interface {
 type authService struct {
 }
 
-func New() AuthService {
+func NewAuthService() AuthService {
 	return &authService{}
 }
 

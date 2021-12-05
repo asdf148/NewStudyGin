@@ -13,8 +13,10 @@ import (
 var (
 	database DB.ConnectDB = DB.New()
 
-	authService    service.AuthService       = service.New()
-	authController controller.AuthController = controller.New(authService)
+	authService     service.AuthService        = service.NewAuthService()
+	authController  controller.AuthController  = controller.NewAuthController(authService)
+	novelService    service.NovelService       = service.NewNovelService()
+	novelController controller.NovelController = controller.NewNovelController(novelService)
 )
 
 func main() {
@@ -39,24 +41,24 @@ func main() {
 	{
 		// 다 가져오기
 		novelRoutes.GET("/", func(ctx *gin.Context) {
-
+			ctx.JSON(http.StatusOK, novelController.FindAll())
 		})
 
 		// 쓰기
-		novelRoutes.POST("/", func(c *gin.Context) {
-
+		novelRoutes.POST("/", func(ctx *gin.Context) {
+			ctx.JSON(http.StatusOK, novelController.Save(ctx))
 		})
 
 		// 수정
-		novelRoutes.PUT("/", func(c *gin.Context) {
+		novelRoutes.PUT("/", func(ctx *gin.Context) {
 
 		})
 
 		// 삭젠
-		novelRoutes.DELETE("/", func(c *gin.Context) {
+		novelRoutes.DELETE("/", func(ctx *gin.Context) {
 
 		})
 	}
 
-	server.Run()
+	server.Run(":3000")
 }
