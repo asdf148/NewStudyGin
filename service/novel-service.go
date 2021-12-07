@@ -8,8 +8,8 @@ import (
 type NovelService interface {
 	FindAll() []model.Novel
 	Save(string, dto.CreateNovel) string
-	Modify()
-	Delete()
+	Modify(string, string, dto.ModifyNovel) string
+	Delete(string, uint) string
 }
 
 type novelService struct {
@@ -41,10 +41,33 @@ func (service *novelService) Save(token string, createNovel dto.CreateNovel) str
 	return "Success"
 }
 
-func (service *novelService) Modify() {
+func (service *novelService) Modify(token string, novelId string, modifyNovel dto.ModifyNovel) string {
+	db := database.Connect()
 
+	_, err := customUtil.ParseTokenWithSecretKey(token)
+	if err != nil {
+		return "error" + err.Error()
+	}
+
+	var novel model.Novel
+	db.First(&novel, novelId)
+
+	novel.Context = modifyNovel.Content
+
+	db.Save(&novel)
+
+	return "Modified"
 }
 
-func (service *novelService) Delete() {
+func (service *novelService) Delete(token string, novelId uint) string {
+	db := database.Connect()
 
+	_, err := customUtil.ParseTokenWithSecretKey(token)
+	if err != nil {
+		return "error" + err.Error()
+	}
+
+	db.Delete(&model.Novel{}, novelId)
+
+	return "Deleted"
 }

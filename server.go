@@ -41,7 +41,7 @@ func main() {
 	{
 		// 다 가져오기
 		novelRoutes.GET("/", func(ctx *gin.Context) {
-			ctx.JSON(http.StatusOK, novelController.FindAll())
+			ctx.JSON(http.StatusCreated, novelController.FindAll())
 		})
 
 		// 쓰기
@@ -51,12 +51,12 @@ func main() {
 
 		// 수정
 		novelRoutes.PUT("/", func(ctx *gin.Context) {
-
+			ctx.JSON(http.StatusOK, novelController.Modify(ctx))
 		})
 
 		// 삭젠
-		novelRoutes.DELETE("/", func(ctx *gin.Context) {
-
+		novelRoutes.DELETE("/:id", func(ctx *gin.Context) {
+			ctx.JSON(http.StatusOK, novelController.Delete(ctx))
 		})
 	}
 
