@@ -6,7 +6,7 @@ import (
 )
 
 type NovelService interface {
-	FindAll() []model.Novel
+	FindAll() []dto.FindAllNovel
 	Save(string, dto.CreateNovel) string
 	Modify(string, string, dto.ModifyNovel) string
 	Delete(string, uint) string
@@ -19,13 +19,19 @@ func NewNovelService() NovelService {
 	return &novelService{}
 }
 
-func (service *novelService) FindAll() []model.Novel {
+func (service *novelService) FindAll() []dto.FindAllNovel {
 	db := database.Connect()
 
 	var novels []model.Novel
 	db.Find(&novels)
 
-	return novels
+	var reNovels []dto.FindAllNovel
+
+	for _, novel := range novels {
+		reNovels = append(reNovels, dto.NewFindAllNovel(novel.ID, novel.Title, novel.Context, novel.UserID, novel.CreatedAt))
+	}
+
+	return reNovels
 }
 
 func (service *novelService) Save(token string, createNovel dto.CreateNovel) string {

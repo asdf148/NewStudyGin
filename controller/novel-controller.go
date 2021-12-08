@@ -28,7 +28,7 @@ func NewNovelController(service service.NovelService) NovelController {
 
 func (c *novelController) FindAll() gin.H {
 	return gin.H{
-		"users": c.service.FindAll(),
+		"novels": c.service.FindAll(),
 	}
 }
 
