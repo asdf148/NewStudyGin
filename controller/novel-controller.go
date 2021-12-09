@@ -1,8 +1,8 @@
 package controller
 
 import (
+	"fmt"
 	"strconv"
-	"strings"
 
 	dto "asdf148.com/GinProject/dto/novel"
 	"asdf148.com/GinProject/service"
@@ -33,32 +33,41 @@ func (c *novelController) FindAll() gin.H {
 }
 
 func (c *novelController) Save(ctx *gin.Context) gin.H {
-	bearerToken := ctx.Request.Header["Authorization"][0]
-	token := strings.Split(bearerToken, " ")[1]
-
 	var createNovel dto.CreateNovel
 	ctx.ShouldBindJSON(&createNovel)
 
+	UserId := fmt.Sprint(ctx.Keys["userId"])
+	userId, err := strconv.ParseUint(UserId, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+
 	return gin.H{
-		"message": c.service.Save(token, createNovel),
+		"message": c.service.Save(uint(userId), createNovel),
 	}
 }
 
 func (c *novelController) Modify(ctx *gin.Context) gin.H {
-	bearerToken := ctx.Request.Header["Authorization"][0]
-	token := strings.Split(bearerToken, " ")[1]
+	UserId := fmt.Sprint(ctx.Keys["userId"])
+	userId, err := strconv.ParseUint(UserId, 10, 64)
+	if err != nil {
+		panic(err)
+	}
 
 	var modifyNovel dto.ModifyNovel
 	ctx.ShouldBindJSON(&modifyNovel)
 
 	return gin.H{
-		"message": c.service.Modify(token, ctx.Query("novel"), modifyNovel),
+		"message": c.service.Modify(uint(userId), ctx.Query("novel"), modifyNovel),
 	}
 }
 
 func (c *novelController) Delete(ctx *gin.Context) gin.H {
-	bearerToken := ctx.Request.Header["Authorization"][0]
-	token := strings.Split(bearerToken, " ")[1]
+	UserId := fmt.Sprint(ctx.Keys["userId"])
+	userId, err := strconv.ParseUint(UserId, 10, 64)
+	if err != nil {
+		panic(err)
+	}
 
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	if err != nil {
@@ -68,6 +77,6 @@ func (c *novelController) Delete(ctx *gin.Context) gin.H {
 	}
 
 	return gin.H{
-		"message": c.service.Delete(token, uint(id)),
+		"message": c.service.Delete(uint(userId), uint(id)),
 	}
 }

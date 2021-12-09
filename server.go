@@ -5,6 +5,7 @@ import (
 
 	"asdf148.com/GinProject/DB"
 	"asdf148.com/GinProject/controller"
+	"asdf148.com/GinProject/middleware"
 	"asdf148.com/GinProject/model"
 	"asdf148.com/GinProject/service"
 	"github.com/gin-gonic/gin"
@@ -17,6 +18,8 @@ var (
 	authController  controller.AuthController  = controller.NewAuthController(authService)
 	novelService    service.NovelService       = service.NewNovelService()
 	novelController controller.NovelController = controller.NewNovelController(novelService)
+
+	tokenMiddleware middleware.TokenVerification = middleware.NewTokenVerification()
 )
 
 func main() {
@@ -41,12 +44,12 @@ func main() {
 	{
 		// 다 가져오기
 		novelRoutes.GET("/", func(ctx *gin.Context) {
-			ctx.JSON(http.StatusCreated, novelController.FindAll())
+			ctx.JSON(http.StatusOK, novelController.FindAll())
 		})
-
+		novelRoutes.Use(tokenMiddleware.TokenVerify)
 		// 쓰기
 		novelRoutes.POST("/", func(ctx *gin.Context) {
-			ctx.JSON(http.StatusOK, novelController.Save(ctx))
+			ctx.JSON(http.StatusCreated, novelController.Save(ctx))
 		})
 
 		// 수정
